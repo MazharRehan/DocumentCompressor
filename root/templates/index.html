@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Local Compression & Conversion</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://unpkg.com/dropzone@6.0.0-beta.2/dist/dropzone.css" />
+  <script defer src="https://unpkg.com/dropzone@6.0.0-beta.2/dist/dropzone-min.js"></script>
+  <script defer src="/static/app.js"></script>
+</head>
+<body class="bg-gray-50">
+  <div class="max-w-4xl mx-auto p-6">
+    <h1 class="text-2xl font-semibold mb-4">Local Compression & Conversion</h1>
+
+    {% if missing_deps %}
+    <div class="bg-red-50 border border-red-300 text-red-800 px-4 py-3 rounded mb-4">
+      <p class="font-semibold">⚠️ Missing Dependencies:</p>
+      <ul class="list-disc ml-6 mt-2">
+        {% for dep in missing_deps %}
+        <li>{{ dep }}</li>
+        {% endfor %}
+      </ul>
+      <p class="mt-2 text-sm">PDF operations require Ghostscript. PDF-to-image conversion requires ImageMagick.</p>
+      <p class="text-sm">
+        <strong>Windows:</strong> Download from 
+        <a href="https://ghostscript.com/releases/gsdnld.html" target="_blank" class="underline">Ghostscript</a> and 
+        <a href="https://imagemagick.org/script/download.php#windows" target="_blank" class="underline">ImageMagick</a>
+      </p>
+    </div>
+    {% endif %}
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <section class="bg-white p-4 rounded shadow">
+        <h2 class="font-medium mb-2">Compress</h2>
+        <form id="compress-form" class="space-y-3">
+          <div class="flex gap-2">
+            <input type="number" name="target_kb" placeholder="Target size (KB)" class="border p-2 rounded w-full">
+            <select name="preset" class="border p-2 rounded">
+              <option value="">Preset</option>
+              <option value="high">High</option>
+              <option value="medium">Medium</option>
+              <option value="low">Low</option>
+            </select>
+          </div>
+          <label class="inline-flex items-center gap-2">
+            <input type="checkbox" name="use_tinify" value="1">
+            <span>Use Tinify (TinyPNG)<?php /* server-side templating isn't needed here */ ?></span>
+          </label>
+          <div id="compress-dropzone" class="dropzone border-dashed border-2 rounded p-4"></div>
+          <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Compress</button>
+        </form>
+      </section>
+
+      <section class="bg-white p-4 rounded shadow">
+        <h2 class="font-medium mb-2">Convert</h2>
+        <form id="convert-form" class="space-y-3">
+          <select name="target_format" class="border p-2 rounded w-full">
+            <option value="jpg">To JPG</option>
+            <option value="png">To PNG</option>
+            <option value="webp">To WEBP</option>
+            <option value="pdf">Images → PDF</option>
+            <option value="images">PDF → Images</option>
+            <option value="pdfa">PDF → PDF/A</option>
+          </select>
+          <div id="convert-dropzone" class="dropzone border-dashed border-2 rounded p-4"></div>
+          <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded">Convert</button>
+        </form>
+      </section>
+    </div>
+
+    <div id="result" class="mt-6"></div>
+  </div>
+</body>
+</html>
